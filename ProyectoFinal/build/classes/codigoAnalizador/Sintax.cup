@@ -1,0 +1,127 @@
+package codigoAnalizador;
+
+import java_cup.runtime.Symbol;
+
+parser code
+{:
+    private Symbol s;
+    
+    public void syntax_error(Symbol s){
+        this.s = s;
+    }
+
+    public Symbol getS(){
+        return this.s;
+}
+:};
+
+terminal Linea, Comillas, If, Else, ElseIf, Then, While, For, Set, Puts,  Expr,
+    Procedimiento, Return, Break, Continue, Switch, Default, Literal, Op_aritmetico,
+    Signo_interrogacion, Diagonal_invertida, Exponente, Op_relacional, Op_incremento,
+    Op_relacional_cadena, Op_booleano, Op_logico, Llave_apertura, Llave_cierre,
+    Corchete_apertura, Corchete_cierre, Signo_dolar, Identificador, Numero, ERROR;
+
+non terminal INICIO, SENTENCIA, DECLARACION, DECLARACION_FOR, IF, IF_ELSE,
+    WHILE, FOR, SENTENCIA_BOOLEANA, SENTENCIA_FOR, EXPRESION, SWITCH, SENTENCIA_SWITCH
+    ,PROCEDIMIENTO, SENTENCIA_PROC, DECLARACION_IF;
+
+start with INICIO;
+
+INICIO ::=  SENTENCIA;
+
+SENTENCIA ::= 
+    SENTENCIA DECLARACION |
+    DECLARACION |   
+    SENTENCIA EXPRESION |
+    EXPRESION |
+    SENTENCIA IF |
+    IF |
+    SENTENCIA FOR |
+    FOR |
+    SENTENCIA SWITCH |
+    SWITCH |
+    SENTENCIA PROCEDIMIENTO |
+    PROCEDIMIENTO |
+    SENTENCIA WHILE |
+    WHILE;
+
+DECLARACION ::= 
+    Set Identificador Numero |    
+    Set Identificador EXPRESION  |
+    Set Identificador Comillas Identificador Comillas |
+    Puts Signo_dolar Identificador |    
+    Puts Literal;
+ 
+EXPRESION ::= Corchete_apertura Expr Signo_dolar Identificador Op_aritmetico Signo_dolar Identificador  Corchete_cierre|
+    Corchete_apertura Expr Llave_apertura Signo_dolar Identificador Op_aritmetico Signo_dolar Identificador Llave_cierre Corchete_cierre |
+    Corchete_apertura Expr Llave_apertura Signo_dolar Identificador Op_aritmetico Numero Llave_cierre Corchete_cierre;
+
+IF ::= If Llave_apertura SENTENCIA_BOOLEANA Llave_cierre Llave_apertura SENTENCIA Llave_cierre |
+       If Llave_apertura SENTENCIA_BOOLEANA Llave_cierre Llave_apertura SENTENCIA Llave_cierre DECLARACION_IF;
+
+DECLARACION_IF ::= Else Llave_apertura SENTENCIA Llave_cierre;
+
+SENTENCIA_BOOLEANA ::= 
+    Op_booleano | 
+    Signo_dolar Identificador Op_relacional Op_booleano |
+    Signo_dolar Identificador Op_relacional Numero |
+    Signo_dolar Identificador Op_relacional Identificador |
+    Signo_dolar Identificador Op_relacional Comillas Comillas |
+    Signo_dolar Identificador Op_relacional Comillas Identificador Comillas;
+
+FOR ::= For Llave_apertura SENTENCIA_FOR 
+        Llave_cierre 
+
+        Llave_apertura 
+        SENTENCIA_FOR 
+        Llave_cierre 
+
+        Llave_apertura 
+        SENTENCIA_FOR 
+        Llave_cierre 
+
+        Llave_apertura SENTENCIA 
+        Llave_cierre;
+
+SENTENCIA_FOR ::=
+    Set Identificador  Numero  |
+    Signo_dolar Identificador Op_relacional Signo_dolar Identificador |
+    Signo_dolar Identificador Op_relacional  Numero |
+    Op_incremento Identificador;
+
+SWITCH ::= Switch Identificador Llave_apertura SENTENCIA_SWITCH  SENTENCIA_SWITCH  SENTENCIA_SWITCH  SENTENCIA_SWITCH Llave_cierre |
+           Switch Identificador Llave_apertura SENTENCIA_SWITCH Llave_cierre;
+
+SENTENCIA_SWITCH ::= 
+        Literal Llave_apertura DECLARACION Llave_cierre |
+        Comillas Numero Comillas Llave_apertura DECLARACION Llave_cierre |
+        Comillas Identificador Comillas Llave_apertura DECLARACION Llave_cierre |
+        Identificador Llave_apertura DECLARACION Llave_cierre |
+        Signo_dolar Identificador Llave_apertura DECLARACION Llave_cierre |
+        Default Llave_apertura DECLARACION Llave_cierre;
+
+PROCEDIMIENTO ::= Procedimiento Identificador Llave_apertura Identificador Identificador Llave_cierre
+    Llave_apertura SENTENCIA_PROC SENTENCIA_PROC SENTENCIA_PROC Llave_cierre;
+
+SENTENCIA_PROC ::= 
+    Set Identificador EXPRESION |
+    Return Signo_dolar Identificador;
+
+
+WHILE ::= While Llave_apertura SENTENCIA_BOOLEANA Llave_cierre Llave_apertura DECLARACION DECLARACION Llave_cierre;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
